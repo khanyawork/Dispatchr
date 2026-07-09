@@ -1,8 +1,8 @@
-# FieldFlow
+# Dispatchr
 
 **Cross-Platform Field Service Operations Platform**
 
-FieldFlow is a cross-platform application built with Flutter and Supabase, targeting Android, iOS, Windows, macOS, and Linux. It provides a single authenticated platform through which business owners, field technicians, and clients coordinate scheduling, job execution, and service records — with the owner/admin layer functioning as an operational command center for the business.
+Dispatchr is a cross-platform application built with Flutter and Supabase, targeting Android, iOS, Windows, macOS, and Linux. It provides a single authenticated platform through which business owners, field technicians, and clients coordinate scheduling, job execution, and service records — with the owner/admin layer functioning as an operational command center for the business.
 
 ---
 
@@ -31,7 +31,7 @@ FieldFlow is a cross-platform application built with Flutter and Supabase, targe
 
 Small and mid-sized service businesses (plumbing, electrical, cleaning, landscaping, HVAC, general maintenance) typically coordinate operations through an ad hoc mix of phone calls, messaging apps, and paper records. This produces missed or double-booked appointments, no reliable record of completed work, lost proof-of-work documentation, manual invoicing errors, and no operational visibility for the business owner.
 
-FieldFlow addresses this with a unified, role-aware platform:
+Dispatchr addresses this with a unified, role-aware platform:
 
 - **Owners/Administrators** operate from a command center that provides full visibility into scheduling, technician activity, job status, and business performance.
 - **Technicians** receive assigned jobs, update status in real time, and capture proof-of-work documentation in the field.
@@ -61,7 +61,7 @@ This is designed as a genuine, monetizable SaaS product: a subscription-based op
 | **Owner**         | Business owner/dispatcher           | Full data for their own business tenant      | Assign jobs quickly, view technician availability, avoid double-booking, monitor business performance |
 | **Administrator** | Platform operator (you/your studio) | All business tenants on the platform         | Onboard new businesses, manage subscriptions, monitor platform health, support escalations            |
 
-**Owner vs. Administrator, clarified:** these are two different altitudes, not two names for the same role. An **Owner** runs one business inside FieldFlow (e.g., a cleaning company) and only ever sees their own tenant's data. An **Administrator** operates the FieldFlow platform itself — the SaaS provider's side — with visibility across every business tenant, billing, and platform configuration. In Phase 1, while you're the only business using the app, you may hold both roles personally, but the permission model treats them as structurally distinct from day one so Phase 3's multi-tenant SaaS launch doesn't require a rebuild.
+**Owner vs. Administrator, clarified:** these are two different altitudes, not two names for the same role. An **Owner** runs one business inside Dispatchr (e.g., a cleaning company) and only ever sees their own tenant's data. An **Administrator** operates the Dispatchr platform itself — the SaaS provider's side — with visibility across every business tenant, billing, and platform configuration. In Phase 1, while you're the only business using the app, you may hold both roles personally, but the permission model treats them as structurally distinct from day one so Phase 3's multi-tenant SaaS launch doesn't require a rebuild.
 
 ---
 
@@ -144,8 +144,8 @@ Red is reserved for destructive actions, error states, and urgent/overdue job fl
 ### 6.2 Clone and Install Dependencies
 
 ```bash
-git clone https://github.com/<your-org>/fieldflow.git
-cd fieldflow
+git clone https://github.com/<your-org>/dispatchr.git
+cd dispatchr
 flutter pub get
 ```
 
@@ -187,7 +187,7 @@ dart format --set-exit-if-changed .
 ## 7. Project Structure
 
 ```
-fieldflow/
+dispatchr/
 ├── lib/
 │   ├── main.dart
 │   ├── app/                # App-level routing, theme, root widget
@@ -224,7 +224,7 @@ Every role sits inside the same `profiles.role` model (`client`, `technician`, `
 
 ### 8.1 Client
 
-**Who they are:** the end customer requesting a service — a homeowner or business booking a plumber, cleaner, electrician, etc. through the business that has onboarded to FieldFlow.
+**Who they are:** the end customer requesting a service — a homeowner or business booking a plumber, cleaner, electrician, etc. through the business that has onboarded to Dispatchr.
 
 **Primary goal:** get a job done without phoning the office, and know what's happening at every stage.
 
@@ -265,7 +265,7 @@ Every role sits inside the same `profiles.role` model (`client`, `technician`, `
 
 ### 8.2 Technician
 
-**Who they are:** the field worker performing the actual service — plumber, cleaner, electrician, HVAC tech, etc. — employed or contracted by a business using FieldFlow.
+**Who they are:** the field worker performing the actual service — plumber, cleaner, electrician, HVAC tech, etc. — employed or contracted by a business using Dispatchr.
 
 **Primary goal:** know exactly where to be, what to do, and log proof of work with minimal friction, often on a small screen outdoors with unreliable signal.
 
@@ -307,7 +307,7 @@ Every role sits inside the same `profiles.role` model (`client`, `technician`, `
 
 ### 8.3 Owner (Business Command Center)
 
-**Who they are:** the person running a single business on FieldFlow — the dispatcher/decision-maker for one tenant (e.g., a cleaning company with three technicians). This is the role your original "operational command center" concept maps to.
+**Who they are:** the person running a single business on Dispatchr — the dispatcher/decision-maker for one tenant (e.g., a cleaning company with three technicians). This is the role your original "operational command center" concept maps to.
 
 **Primary goal:** full visibility and control over their business's day-to-day operations, without needing to be physically present or call around to find out what's happening.
 
@@ -342,7 +342,7 @@ Every role sits inside the same `profiles.role` model (`client`, `technician`, `
 **Cannot do:**
 
 - View or manage data belonging to any other business tenant
-- Access platform-level settings (billing between the business and FieldFlow itself, platform feature flags) — that's Administrator territory
+- Access platform-level settings (billing between the business and Dispatchr itself, platform feature flags) — that's Administrator territory
 - Impersonate the Administrator role
 
 **Typical journey:** Owner opens the dashboard each morning → reviews today's jobs and any client requests received overnight → assigns unassigned jobs to available technicians → monitors status changes as the day progresses → follows up on anything flagged red (overdue/unassigned) → reviews weekly performance on a Friday → (Phase 2) sends outstanding invoices.
@@ -353,7 +353,7 @@ Every role sits inside the same `profiles.role` model (`client`, `technician`, `
 
 ### 8.4 Administrator (Platform Command Center)
 
-**Who they are:** the operator of the FieldFlow platform itself — you or your studio's team, sitting above every individual business tenant. This role only makes sense once FieldFlow moves toward Phase 3's multi-tenant SaaS model, but the permission structure exists from Phase 1 so it doesn't require retrofitting later.
+**Who they are:** the operator of the Dispatchr platform itself — you or your studio's team, sitting above every individual business tenant. This role only makes sense once Dispatchr moves toward Phase 3's multi-tenant SaaS model, but the permission structure exists from Phase 1 so it doesn't require retrofitting later.
 
 **Primary goal:** keep the platform healthy, onboard and support business tenants, and monitor cross-tenant metrics — without needing to see the operational minutiae of any single business's day-to-day jobs.
 
@@ -415,11 +415,11 @@ Every role sits inside the same `profiles.role` model (`client`, `technician`, `
 
 | Role       | Email                 | Password       | Name           | Notes                                          |
 | ---------- | --------------------- | -------------- | -------------- | ---------------------------------------------- |
-| Admin      | admin@fieldflow.test  | Test@Admin123  | Thandiwe Admin | Full command-center access, all business data  |
-| Owner      | owner@fieldflow.test  | Test@Owner123  | Sipho Owner    | Single-business scope, job creation/assignment |
-| Technician | tech1@fieldflow.test  | Test@Tech123   | Lindiwe Tech   | Assigned 3 seeded jobs (mixed statuses)        |
-| Technician | tech2@fieldflow.test  | Test@Tech123   | Mpho Tech      | No jobs assigned — tests empty state           |
-| Client     | client@fieldflow.test | Test@Client123 | Naledi Client  | Two seeded requests, one completed             |
+| Admin      | admin@dispatchr.test  | Test@Admin123  | Thandiwe Admin | Full command-center access, all business data  |
+| Owner      | owner@dispatchr.test  | Test@Owner123  | Sipho Owner    | Single-business scope, job creation/assignment |
+| Technician | tech1@dispatchr.test  | Test@Tech123   | Lindiwe Tech   | Assigned 3 seeded jobs (mixed statuses)        |
+| Technician | tech2@dispatchr.test  | Test@Tech123   | Mpho Tech      | No jobs assigned — tests empty state           |
+| Client     | client@dispatchr.test | Test@Client123 | Naledi Client  | Two seeded requests, one completed             |
 
 ---
 
