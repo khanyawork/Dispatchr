@@ -35,6 +35,16 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Backend & database (README Section 4): auth, Postgres, storage, realtime.
+  supabase_flutter: ^2.8.0
+
+  # State management (README Section 4): predictable state across
+  # multi-role navigation flows.
+  flutter_riverpod: ^2.6.1
+
+  # Loads SUPABASE_URL / SUPABASE_ANON_KEY from .env (README Section 6.3).
+  flutter_dotenv: ^5.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,6 +55,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+  # No-codegen mocking for repository unit tests (e.g.
+  # auth_repository_test.dart mocking SupabaseClient/GoTrueClient).
+  mocktail: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -57,10 +71,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  # .env holds local Supabase credentials (README Section 6.3) — bundled
+  # as an asset so flutter_dotenv can load it via the asset bundle. The
+  # file is gitignored; copy .env.example to .env and fill in your own
+  # project's values before running.
+  assets:
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
