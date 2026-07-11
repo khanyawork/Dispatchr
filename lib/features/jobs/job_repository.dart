@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../app/app_providers.dart';
 import '../../core/constants.dart';
+import '../../dev/preview_mode.dart';
+import '../../dev/preview_repositories.dart';
 
 /// Shared job CRUD logic used across the Client, Technician, and Owner
 /// flows (README's `jobs` table, Section 10) — the cross-role complement
@@ -102,5 +104,6 @@ class JobRepository {
 }
 
 final jobRepositoryProvider = Provider<JobRepository>((ref) {
+  if (PreviewMode.enabled) return PreviewJobRepository();
   return JobRepository(ref.watch(supabaseClientProvider));
 });

@@ -3,6 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../app/app_providers.dart';
 import '../../core/constants.dart';
+import '../../dev/preview_mode.dart';
+import '../../dev/preview_repositories.dart';
 
 /// Business-scoped Supabase queries for the Owner role (README Section
 /// 8.3), consolidating what `technician_roster_screen.dart`,
@@ -81,5 +83,6 @@ class OwnerRepository {
 }
 
 final ownerRepositoryProvider = Provider<OwnerRepository>((ref) {
+  if (PreviewMode.enabled) return PreviewOwnerRepository();
   return OwnerRepository(ref.watch(supabaseClientProvider));
 });

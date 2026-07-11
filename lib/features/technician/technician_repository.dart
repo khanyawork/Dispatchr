@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../dev/preview_mode.dart';
+import '../../dev/preview_repositories.dart';
+
 /// A `jobs` row as returned by Supabase.
 typedef JobRecord = Map<String, dynamic>;
 
@@ -154,6 +157,7 @@ class TechnicianRepository {
 }
 
 final technicianRepositoryProvider = Provider<TechnicianRepository>((ref) {
+  if (PreviewMode.enabled) return PreviewTechnicianRepository();
   return TechnicianRepository();
 });
 

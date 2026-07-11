@@ -45,7 +45,7 @@ class _MyJobsScreenState extends ConsumerState<MyJobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = ref.watch(supabaseClientProvider).auth.currentUser?.id;
+    final userId = currentUserId(ref);
 
     return Scaffold(
       appBar: AppBar(

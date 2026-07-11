@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import '../../shared/theme/app_theme.dart';
 import '../../app/app_providers.dart';
 import '../../app/router.dart';
 import '../../core/constants.dart';
+import '../../dev/preview_mode.dart';
 
 /// README Section 8's shared log-in entry point for Client, Technician, and
 /// Owner (Section 8.4: Admin gets a separate, more tightly secured flow in
@@ -48,6 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _errorMessage = null;
     });
 
+    PreviewMode.enabled = false;
     final client = ref.read(supabaseClientProvider);
 
     try {
@@ -74,6 +77,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
+  }
+
+  void _devBypass(UserRole role) {
+    PreviewMode.enabled = true;
+    AppSession.instance.signIn(role);
   }
 
   @override
@@ -171,6 +179,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           : () => context.go(AppRoutes.signup),
                       child: const Text("Don't have an account? Sign up"),
                     ),
+                    if (kDebugMode) ...[
+                      const SizedBox(height: 24),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Preview mode (sample data, no Supabase)',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: colors.textSecondary),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          OutlinedButton(
+                            onPressed: () => _devBypass(UserRole.client),
+                            child: const Text('Client'),
+                          ),
+                          OutlinedButton(
+                            onPressed: () => _devBypass(UserRole.technician),
+                            child: const Text('Technician'),
+                          ),
+                          OutlinedButton(
+                            onPressed: () => _devBypass(UserRole.owner),
+                            child: const Text('Owner'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
