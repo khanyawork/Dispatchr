@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Dispatchr uses your camera to attach photos to a job.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Dispatchr uses your photo library to attach photos to a job.</string>
 </dict>
 </plist>

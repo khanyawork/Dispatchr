@@ -1,68 +1,51 @@
 import 'package:flutter/material.dart';
 
-import '../../core/design_tokens.dart';
-import '../../core/extensions/context_extensions.dart';
-import '../../features/jobs/job_status.dart';
+import '../theme/app_theme.dart';
+import '../../core/constants.dart';
 
-/// Animated status pill for Pending → In Progress → Completed
-/// (README Section 5.3: "animate the status badge color/label change
-/// rather than an abrupt swap"). `FileManifest.md`:
-/// `lib/shared/widgets/status_badge.dart`.
-///
-/// Centralizes the status-pill styling duplicated inline across
-/// `request_detail_screen.dart`, `job_list_screen.dart`, and
-/// `dashboard_screen.dart` — those can migrate onto this widget next.
+/// Animated status pill for a job's `status` value (README Section 5.3:
+/// status transitions animate the badge color/label rather than swapping
+/// abruptly). Shared across the Client, Technician, and Owner job lists.
 class StatusBadge extends StatelessWidget {
-  const StatusBadge({super.key, required this.status, this.dense = false});
+  const StatusBadge({super.key, required this.status});
 
-  final JobStatus status;
+  final String status;
 
-  /// Tighter padding/icon/text for list rows; the default size suits
-  /// detail screens.
-  final bool dense;
+  static const _labels = {
+    JobStatuses.pending: 'Pending',
+    JobStatuses.inProgress: 'In Progress',
+    JobStatuses.completed: 'Completed',
+  };
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDarkMode;
+    final scheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppColorExtension>()!;
+
     final color = switch (status) {
-      JobStatus.completed =>
-        isDark ? DesignTokens.successDark : DesignTokens.successLight,
-      JobStatus.inProgress =>
-        isDark ? DesignTokens.primaryDark : DesignTokens.primaryLight,
-      JobStatus.pending =>
-        isDark ? DesignTokens.textSecondaryDark : DesignTokens.textSecondaryLight,
+      JobStatuses.inProgress => scheme.primary,
+      JobStatuses.completed => colors.success,
+      _ => colors.textSecondary,
     };
 
     return AnimatedContainer(
-      duration: DesignTokens.statusTransitionDuration,
+      duration: const Duration(milliseconds: 180),
       curve: Curves.easeOut,
-      padding: EdgeInsets.symmetric(
-        horizontal: dense ? 10 : 12,
-        vertical: dense ? 4 : 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color),
+        borderRadius: BorderRadius.circular(999),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.circle, size: dense ? 6 : 8, color: color),
-          SizedBox(width: dense ? 4 : 6),
-          AnimatedSwitcher(
-            duration: DesignTokens.statusTransitionDuration,
-            child: Text(
-              status.label,
-              key: ValueKey(status),
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: dense ? DesignTokens.fontSizeXs : DesignTokens.fontSizeSm,
-              ),
-            ),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 180),
+        child: Text(
+          _labels[status] ?? status,
+          key: ValueKey(status),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
           ),
-        ],
+        ),
       ),
     );
   }
