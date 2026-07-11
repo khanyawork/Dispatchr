@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Needed by image_picker to attach photos to a job (README Section 8.1/8.2) -->
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:label="dispatchr"
         android:name="${applicationName}"
