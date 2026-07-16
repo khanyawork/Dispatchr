@@ -10,6 +10,7 @@ import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/skeleton_loader.dart';
 import '../../shared/widgets/status_badge.dart';
 import '../jobs/job_provider.dart';
+import '../jobs/job_status.dart';
 
 /// README Section 8.2's technician home — "My Jobs": today's assigned jobs
 /// by default, with a date filter to browse upcoming/past jobs. Only shows
@@ -223,7 +224,7 @@ class _JobCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  StatusBadge(status: job.status),
+                  StatusBadge(status: JobStatus.fromValueOrDefault(job.status)),
                 ],
               ),
               if (job.description != null &&

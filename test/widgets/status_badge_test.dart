@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dispatchr/features/jobs/job_status.dart';
+import 'package:dispatchr/shared/theme/app_theme.dart';
 import 'package:dispatchr/shared/widgets/status_badge.dart';
 
 void main() {
   Widget wrap(Widget child, {Brightness brightness = Brightness.light}) {
     return MaterialApp(
-      theme: ThemeData(brightness: brightness),
+      theme: buildAppTheme(brightness),
       home: Scaffold(body: Center(child: child)),
     );
   }

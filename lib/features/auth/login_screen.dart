@@ -9,6 +9,7 @@ import '../../app/app_providers.dart';
 import '../../app/router.dart';
 import '../../core/constants.dart';
 import '../../dev/preview_mode.dart';
+import '../../shared/widgets/app_logo.dart';
 
 /// README Section 8's shared log-in entry point for Client, Technician, and
 /// Owner (Section 8.4: Admin gets a separate, more tightly secured flow in
@@ -101,11 +102,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      appName,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
+                    const Center(child: AppWordmark(markSize: 40)),
                     const SizedBox(height: 8),
                     Text(
                       'Log in to your account',
@@ -206,6 +203,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           OutlinedButton(
                             onPressed: () => _devBypass(UserRole.owner),
                             child: const Text('Owner'),
+                          ),
+                          OutlinedButton(
+                            onPressed: () => _devBypass(UserRole.admin),
+                            child: const Text('Admin'),
                           ),
                         ],
                       ),

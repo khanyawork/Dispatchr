@@ -33,6 +33,7 @@ String? currentUserId(WidgetRef ref) {
       UserRole.client => PreviewIds.client,
       UserRole.technician => PreviewIds.technician,
       UserRole.owner => PreviewIds.owner,
+      UserRole.admin => PreviewIds.admin,
       _ => null,
     };
   }

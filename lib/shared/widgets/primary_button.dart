@@ -9,6 +9,11 @@ import '../../core/extensions/context_extensions.dart';
 /// scale on hover to reinforce interactivity — no instant color snaps,
 /// and motion stays under the 250ms ceiling. `FileManifest.md`:
 /// `lib/shared/widgets/primary_button.dart`.
+///
+/// Visual notes: enabled buttons carry a faint teal-tinted drop shadow in
+/// light mode (deepening slightly on hover) so the CTA sits just above the
+/// page; in dark mode the bright teal fill provides all the emphasis and
+/// shadows stay off. Press compresses to 0.98x for a tactile response.
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
     super.key,
@@ -44,10 +49,30 @@ class _PrimaryButtonState extends State<PrimaryButton> {
     final textSecondary = isDark
         ? DesignTokens.textSecondaryDark
         : DesignTokens.textSecondaryLight;
+    // Ink on the teal fill: white in light mode, near-black in dark mode
+    // (where the primary teal is bright).
+    final onPrimary = context.colorScheme.onPrimary;
 
     final isActive = _isHovered || _isPressed;
     final backgroundColor = _isDisabled ? border : (isActive ? hover : base);
-    final scale = !_isDisabled && _isHovered ? DesignTokens.hoverScale : 1.0;
+    final foregroundColor = _isDisabled ? textSecondary : onPrimary;
+    final scale = _isDisabled
+        ? 1.0
+        : _isPressed
+        ? 0.98
+        : (_isHovered ? DesignTokens.hoverScale : 1.0);
+
+    // A whisper of teal-tinted depth under the CTA — light mode only;
+    // dark mode relies on the bright fill for emphasis.
+    final shadows = (_isDisabled || isDark)
+        ? const <BoxShadow>[]
+        : [
+            BoxShadow(
+              color: base.withValues(alpha: _isHovered ? 0.30 : 0.18),
+              blurRadius: _isHovered ? 14 : 8,
+              offset: Offset(0, _isHovered ? 5 : 3),
+            ),
+          ];
 
     return MouseRegion(
       cursor: _isDisabled
@@ -56,9 +81,13 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
-        onTapDown: _isDisabled ? null : (_) => setState(() => _isPressed = true),
+        onTapDown: _isDisabled
+            ? null
+            : (_) => setState(() => _isPressed = true),
         onTapUp: _isDisabled ? null : (_) => setState(() => _isPressed = false),
-        onTapCancel: _isDisabled ? null : () => setState(() => _isPressed = false),
+        onTapCancel: _isDisabled
+            ? null
+            : () => setState(() => _isPressed = false),
         onTap: _isDisabled ? null : widget.onPressed,
         child: AnimatedScale(
           scale: scale,
@@ -67,36 +96,39 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           child: AnimatedContainer(
             duration: DesignTokens.hoverTransitionDuration,
             curve: Curves.easeOut,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(10),
+              boxShadow: shadows,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: widget.isLoading
-                  ? const [
+                  ? [
                       SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: onPrimary,
                         ),
                       ),
                     ]
                   : [
                       if (widget.icon != null) ...[
-                        Icon(widget.icon, color: Colors.white, size: 18),
+                        Icon(widget.icon, color: foregroundColor, size: 18),
                         const SizedBox(width: 8),
                       ],
                       Text(
                         widget.label,
                         style: TextStyle(
-                          color: _isDisabled ? textSecondary : Colors.white,
+                          color: foregroundColor,
                           fontSize: DesignTokens.fontSizeMd,
                           fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                          height: 1.2,
                         ),
                       ),
                     ],

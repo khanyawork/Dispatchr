@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_tokens.dart';
 import '../../core/extensions/context_extensions.dart';
 import '../../core/utils/date_formatter.dart';
+import '../../shared/widgets/section_nav_menu.dart';
 import 'create_edit_job_screen.dart';
 import 'job_list_screen.dart';
 import 'owner_repository.dart';
@@ -25,6 +26,7 @@ class DashboardScreen extends ConsumerWidget {
             tooltip: 'All jobs',
             onPressed: () => context.push(const JobListScreen()),
           ),
+          SectionNavMenu(items: ownerSectionItems()),
         ],
       ),
       floatingActionButton: FloatingActionButton(

@@ -3,14 +3,21 @@ import 'package:go_router/go_router.dart';
 
 import '../core/constants.dart';
 import '../features/admin/audit_log_screen.dart';
+import '../features/admin/business_list_screen.dart';
+import '../features/admin/platform_dashboard_screen.dart';
 import '../features/admin/subscription_billing_screen.dart';
 import '../features/admin/user_management_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/signup_screen.dart';
 import '../features/client/client_home_screen.dart';
 import '../features/client/new_request_screen.dart';
+import '../features/client/request_detail_screen.dart';
+import '../features/client/request_history_screen.dart';
 import '../features/technician/job_detail_screen.dart';
 import '../features/owner/client_list_screen.dart';
+import '../features/owner/create_edit_job_screen.dart';
+import '../features/owner/dashboard_screen.dart';
+import '../features/owner/job_list_screen.dart';
 import '../features/owner/performance_screen.dart';
 import '../features/owner/technician_roster_screen.dart';
 import '../features/technician/my_jobs_screen.dart';
@@ -85,6 +92,8 @@ abstract class AppRoutes {
   static const ownerClients = '/owner/clients';
   static const ownerPerformance = '/owner/performance';
 
+  static const adminDashboard = '/admin';
+  static const adminBusinesses = '/admin/businesses';
   static const adminUsers = '/admin/users';
   static const adminBilling = '/admin/billing';
   static const adminAuditLog = '/admin/audit-log';
@@ -102,7 +111,7 @@ String _homeForRole(UserRole role) {
     case UserRole.owner:
       return AppRoutes.ownerDashboard;
     case UserRole.admin:
-      return AppRoutes.adminUsers;
+      return AppRoutes.adminDashboard;
   }
 }
 
@@ -164,13 +173,12 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.clientRequestDetail,
-      builder: (context, state) => _PlaceholderScreen(
-        'Request ${state.pathParameters['id']}',
-      ),
+      builder: (context, state) =>
+          RequestDetailScreen(jobId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: AppRoutes.clientHistory,
-      builder: (context, state) => const _PlaceholderScreen('Job History'),
+      builder: (context, state) => const RequestHistoryScreen(),
     ),
 
     // Technician (README 8.2)
@@ -187,20 +195,20 @@ final GoRouter router = GoRouter(
     // Owner (README 8.3)
     GoRoute(
       path: AppRoutes.ownerDashboard,
-      builder: (context, state) => const _PlaceholderScreen('Dashboard'),
+      builder: (context, state) => const DashboardScreen(),
     ),
     GoRoute(
       path: AppRoutes.ownerJobList,
-      builder: (context, state) => const _PlaceholderScreen('Job List'),
+      builder: (context, state) => const JobListScreen(),
     ),
     GoRoute(
       path: AppRoutes.ownerCreateJob,
-      builder: (context, state) => const _PlaceholderScreen('Create Job'),
+      builder: (context, state) => const CreateEditJobScreen(),
     ),
     GoRoute(
       path: AppRoutes.ownerEditJob,
       builder: (context, state) =>
-          _PlaceholderScreen('Edit Job ${state.pathParameters['id']}'),
+          CreateEditJobScreen(jobId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: AppRoutes.ownerTechnicians,
@@ -216,7 +224,15 @@ final GoRouter router = GoRouter(
     ),
 
     // Admin (README 8.4) — built ahead of the Phase 3 deferral at
-    // explicit request; only these three screens exist so far.
+    // explicit request.
+    GoRoute(
+      path: AppRoutes.adminDashboard,
+      builder: (context, state) => const PlatformDashboardScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.adminBusinesses,
+      builder: (context, state) => const BusinessListScreen(),
+    ),
     GoRoute(
       path: AppRoutes.adminUsers,
       builder: (context, state) => const UserManagementScreen(),

@@ -8,6 +8,10 @@ import '../../core/extensions/context_extensions.dart';
 /// Section 5: "no hardcoded colors"). `FileManifest.md`:
 /// `lib/shared/widgets/app_text_field.dart`.
 ///
+/// Mirrors the app-wide `inputDecorationTheme` in `app_theme.dart` (filled
+/// surfaceAlt, 10px radius, hairline border, 1.5px teal focus ring) so this
+/// widget and bare `TextFormField`s elsewhere are indistinguishable.
+///
 /// Focus/error border color transitions are handled by Flutter's built-in
 /// `InputDecorator` animation, which already runs close to the 150–200ms
 /// window called for in README Section 5.3.
@@ -54,10 +58,11 @@ class AppTextField extends StatelessWidget {
         ? DesignTokens.surfaceAltDark
         : DesignTokens.surfaceAltLight;
 
-    OutlineInputBorder outline(Color color) => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: color),
-    );
+    OutlineInputBorder outline(Color color, {double width = 1}) =>
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: color, width: width),
+        );
 
     return TextFormField(
       controller: controller,
@@ -68,20 +73,32 @@ class AppTextField extends StatelessWidget {
       onChanged: onChanged,
       textInputAction: textInputAction,
       validator: validator,
+      cursorColor: primary,
+      style: context.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
-        hintStyle: TextStyle(color: textSecondary),
+        hintStyle: context.textTheme.bodyMedium?.copyWith(color: textSecondary),
+        labelStyle: context.textTheme.bodyMedium?.copyWith(
+          color: textSecondary,
+        ),
+        floatingLabelStyle: context.textTheme.labelMedium?.copyWith(
+          color: primary,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         prefixIcon: prefixIcon == null
             ? null
-            : Icon(prefixIcon, color: textSecondary),
+            : Icon(prefixIcon, color: textSecondary, size: 20),
         filled: true,
         fillColor: surfaceAlt,
         border: outline(border),
         enabledBorder: outline(border),
-        focusedBorder: outline(primary),
+        focusedBorder: outline(primary, width: 1.5),
         errorBorder: outline(alert),
-        focusedErrorBorder: outline(alert),
+        focusedErrorBorder: outline(alert, width: 1.5),
       ),
     );
   }

@@ -9,9 +9,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../features/admin/admin_repository.dart' hide JobRecord;
 import '../features/client/client_repository.dart';
 import '../features/jobs/job_repository.dart';
-import '../features/owner/owner_repository.dart';
+import '../features/owner/owner_repository.dart' hide JobRecord;
 import '../features/technician/technician_repository.dart' hide JobRecord;
 import 'preview_data.dart';
 
@@ -267,5 +268,154 @@ class PreviewOwnerRepository implements OwnerRepository {
     PreviewStore.instance.updateProfile(technicianId, {
       'business_id': businessId,
     });
+  }
+
+  @override
+  Future<String> createJob({
+    required String clientName,
+    required String address,
+    String? description,
+    String? assignedTechnicianId,
+    DateTime? scheduledDate,
+    TimeOfDay? scheduledTime,
+  }) async {
+    return PreviewStore.instance.createJob({
+      'business_id': PreviewIds.businessId,
+      'client_name': clientName,
+      'address': address,
+      'description': description,
+      'assigned_technician_id': assignedTechnicianId,
+      'scheduled_date': scheduledDate == null ? null : _formatDate(scheduledDate),
+      'scheduled_time': scheduledTime == null ? null : _formatTime(scheduledTime),
+      'status': 'pending',
+      'photo_urls': <String>[],
+    });
+  }
+
+  @override
+  Future<void> updateJob(
+    String jobId, {
+    required String clientName,
+    required String address,
+    String? description,
+    String? assignedTechnicianId,
+    DateTime? scheduledDate,
+    TimeOfDay? scheduledTime,
+    required String status,
+  }) async {
+    PreviewStore.instance.updateJob(jobId, {
+      'client_name': clientName,
+      'address': address,
+      'description': description,
+      'assigned_technician_id': assignedTechnicianId,
+      'scheduled_date': scheduledDate == null ? null : _formatDate(scheduledDate),
+      'scheduled_time': scheduledTime == null ? null : _formatTime(scheduledTime),
+      'status': status,
+    });
+  }
+
+  @override
+  Future<void> deleteJob(String jobId) async {
+    PreviewStore.instance.deleteJob(jobId);
+  }
+}
+
+/// Preview-mode stand-in for [AdminRepository], reading/writing the same
+/// in-memory `PreviewStore` the Client/Technician/Owner preview
+/// repositories use, so the app is fully browsable as every role —
+/// including Admin — without Supabase.
+class PreviewAdminRepository implements AdminRepository {
+  @override
+  Stream<List<Map<String, dynamic>>> watchAllProfiles() {
+    return PreviewStore.instance.watchProfiles();
+  }
+
+  @override
+  Stream<List<BusinessRecord>> watchAllBusinesses() {
+    return PreviewStore.instance.watchBusinesses();
+  }
+
+  @override
+  Stream<List<Map<String, dynamic>>> watchAllJobs() {
+    return PreviewStore.instance.watchJobs();
+  }
+
+  @override
+  Stream<List<Map<String, dynamic>>> watchAuditLog() {
+    return PreviewStore.instance.watchAuditLog();
+  }
+
+  @override
+  Future<void> setUserActive(String userId, bool isActive) async {
+    PreviewStore.instance.updateProfile(userId, {'is_active': isActive});
+  }
+
+  @override
+  Future<void> updateBusinessBilling(
+    String businessId, {
+    required String planTier,
+    required String billingStatus,
+  }) async {
+    PreviewStore.instance.updateBusiness(businessId, {
+      'plan_tier': planTier,
+      'billing_status': billingStatus,
+    });
+  }
+
+  @override
+  Future<void> recordAuditEntry({
+    required String businessId,
+    required String reason,
+  }) async {
+    PreviewStore.instance.recordAudit(businessId: businessId, reason: reason);
+  }
+
+  @override
+  Future<BusinessDetail> getBusinessDetail(
+    String businessId, {
+    required String reason,
+  }) async {
+    final business = PreviewStore.instance.businesses.firstWhere(
+      (b) => b['id'] == businessId,
+      orElse: () => const {},
+    );
+    final ownerId = business['owner_id'] as String?;
+    final owner = PreviewStore.instance.profiles.firstWhere(
+      (p) => p['id'] == ownerId,
+      orElse: () => const {},
+    );
+    final jobs = PreviewStore.instance.jobs
+        .where((j) => j['business_id'] == businessId)
+        .toList()
+      ..sort(
+        (a, b) => (b['created_at'] as String).compareTo(
+          a['created_at'] as String,
+        ),
+      );
+    final technicianCount = PreviewStore.instance.profiles
+        .where(
+          (p) => p['business_id'] == businessId && p['role'] == 'technician',
+        )
+        .length;
+
+    recordAuditEntry(businessId: businessId, reason: reason);
+
+    return BusinessDetail(
+      business: business,
+      ownerName: owner['full_name'] as String?,
+      technicianCount: technicianCount,
+      jobCount: jobs.length,
+      recentJobs: jobs.take(5).toList(),
+    );
+  }
+
+  @override
+  Future<void> suspendBusiness(String businessId) async {
+    PreviewStore.instance.updateBusiness(businessId, {'status': 'suspended'});
+  }
+
+  @override
+  Future<void> reactivateBusiness(String businessId) async {
+    PreviewStore.instance.updateBusiness(businessId, {'status': 'active'});
   }
 }

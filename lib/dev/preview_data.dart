@@ -14,6 +14,16 @@ abstract class PreviewIds {
 
   static const owner = 'preview-owner-1';
   static const ownerName = 'Alex Rivera';
+
+  static const admin = 'preview-admin-1';
+  static const adminName = 'Morgan Pele';
+
+  static const businessName = 'Rivera Home Services';
+
+  static const business2Id = 'preview-business-2';
+  static const business2Name = 'Coastal Cleaning Co.';
+  static const business2OwnerId = 'preview-owner-2';
+  static const business2OwnerName = 'Priya Naidoo';
 }
 
 String _dateAt(int daysFromNow) {
@@ -44,22 +54,34 @@ class PreviewStore {
   PreviewStore._() {
     _jobs.addAll(_seedJobs());
     _profiles.addAll(_seedProfiles());
+    _businesses.addAll(_seedBusinesses());
+    _auditLog.addAll(_seedAuditLog());
   }
 
   static final PreviewStore instance = PreviewStore._();
 
   final List<Map<String, dynamic>> _jobs = [];
   final List<Map<String, dynamic>> _profiles = [];
+  final List<Map<String, dynamic>> _businesses = [];
+  final List<Map<String, dynamic>> _auditLog = [];
 
   final _jobsController =
       StreamController<List<Map<String, dynamic>>>.broadcast();
   final _profilesController =
+      StreamController<List<Map<String, dynamic>>>.broadcast();
+  final _businessesController =
+      StreamController<List<Map<String, dynamic>>>.broadcast();
+  final _auditLogController =
       StreamController<List<Map<String, dynamic>>>.broadcast();
 
   List<Map<String, dynamic>> get jobs =>
       List.unmodifiable(_jobs.map(_withTechnician));
 
   List<Map<String, dynamic>> get profiles => List.unmodifiable(_profiles);
+
+  List<Map<String, dynamic>> get businesses => List.unmodifiable(_businesses);
+
+  List<Map<String, dynamic>> get auditLog => List.unmodifiable(_auditLog);
 
   Stream<List<Map<String, dynamic>>> watchJobs() async* {
     yield jobs;
@@ -69,6 +91,34 @@ class PreviewStore {
   Stream<List<Map<String, dynamic>>> watchProfiles() async* {
     yield profiles;
     yield* _profilesController.stream;
+  }
+
+  Stream<List<Map<String, dynamic>>> watchBusinesses() async* {
+    yield businesses;
+    yield* _businessesController.stream;
+  }
+
+  Stream<List<Map<String, dynamic>>> watchAuditLog() async* {
+    yield auditLog;
+    yield* _auditLogController.stream;
+  }
+
+  void updateBusiness(String id, Map<String, dynamic> patch) {
+    final index = _businesses.indexWhere((b) => b['id'] == id);
+    if (index == -1) return;
+    _businesses[index] = {..._businesses[index], ...patch};
+    _businessesController.add(businesses);
+  }
+
+  void recordAudit({required String businessId, required String reason}) {
+    _auditLog.insert(0, {
+      'id': 'preview-audit-${_auditLog.length + 1}',
+      'admin_id': PreviewIds.admin,
+      'business_id': businessId,
+      'reason': reason,
+      'accessed_at': DateTime.now().toIso8601String(),
+    });
+    _auditLogController.add(auditLog);
   }
 
   Map<String, dynamic> _withTechnician(Map<String, dynamic> job) {
@@ -178,6 +228,47 @@ class PreviewStore {
       'full_name': PreviewIds.ownerName,
       'role': 'owner',
       'business_id': PreviewIds.businessId,
+    },
+    {
+      'id': PreviewIds.admin,
+      'full_name': PreviewIds.adminName,
+      'role': 'admin',
+      'business_id': null,
+    },
+    {
+      'id': PreviewIds.business2OwnerId,
+      'full_name': PreviewIds.business2OwnerName,
+      'role': 'owner',
+      'business_id': PreviewIds.business2Id,
+    },
+  ];
+
+  List<Map<String, dynamic>> _seedBusinesses() => [
+    {
+      'id': PreviewIds.businessId,
+      'name': PreviewIds.businessName,
+      'owner_id': PreviewIds.owner,
+      'status': 'active',
+      'created_at': _createdAt(190),
+    },
+    {
+      'id': PreviewIds.business2Id,
+      'name': PreviewIds.business2Name,
+      'owner_id': PreviewIds.business2OwnerId,
+      'status': 'active',
+      'created_at': _createdAt(40),
+    },
+  ];
+
+  List<Map<String, dynamic>> _seedAuditLog() => [
+    {
+      'id': 'preview-audit-1',
+      'admin_id': PreviewIds.admin,
+      'business_id': PreviewIds.businessId,
+      'reason': 'Investigating a billing support ticket.',
+      'accessed_at': DateTime.now()
+          .subtract(const Duration(days: 2))
+          .toIso8601String(),
     },
   ];
 

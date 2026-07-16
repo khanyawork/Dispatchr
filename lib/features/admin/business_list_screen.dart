@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_tokens.dart';
 import '../../core/extensions/context_extensions.dart';
 import '../../core/utils/date_formatter.dart';
+import '../../shared/widgets/section_nav_menu.dart';
 import 'admin_repository.dart';
 import 'business_detail_screen.dart';
 
@@ -27,7 +28,10 @@ class BusinessListScreen extends ConsumerWidget {
         : DesignTokens.textSecondaryLight;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Businesses')),
+      appBar: AppBar(
+        title: const Text('Businesses'),
+        actions: [SectionNavMenu(items: adminSectionItems())],
+      ),
       body: businessesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(

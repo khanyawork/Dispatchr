@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/design_tokens.dart';
 import '../../core/extensions/context_extensions.dart';
+import '../../shared/widgets/section_nav_menu.dart';
 import 'admin_repository.dart';
 import 'business_list_screen.dart';
 
@@ -27,6 +28,7 @@ class PlatformDashboardScreen extends ConsumerWidget {
             tooltip: 'Businesses',
             onPressed: () => context.push(const BusinessListScreen()),
           ),
+          SectionNavMenu(items: adminSectionItems()),
         ],
       ),
       body: metricsAsync.when(
