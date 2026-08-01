@@ -67,6 +67,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+  # No-codegen mocking for repository unit tests (e.g.
+  # auth_repository_test.dart mocking SupabaseClient/GoTrueClient).
+  mocktail: ^1.0.4
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

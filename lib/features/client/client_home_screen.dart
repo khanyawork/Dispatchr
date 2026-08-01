@@ -10,6 +10,7 @@ import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/skeleton_loader.dart';
 import '../../shared/widgets/status_badge.dart';
 import '../jobs/job_provider.dart';
+import '../jobs/job_status.dart';
 
 /// README Section 8.1's client home — "My Requests": active and past
 /// requests at a glance, updating live via a Supabase Realtime stream so
@@ -24,7 +25,7 @@ class ClientHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userId = ref.watch(supabaseClientProvider).auth.currentUser?.id;
+    final userId = currentUserId(ref);
 
     return Scaffold(
       appBar: AppBar(
@@ -153,7 +154,7 @@ class _RequestCard extends StatelessWidget {
                     child: Text(job.address, style: textTheme.titleMedium),
                   ),
                   const SizedBox(width: 8),
-                  StatusBadge(status: job.status),
+                  StatusBadge(status: JobStatus.fromValueOrDefault(job.status)),
                 ],
               ),
               if (job.description != null &&

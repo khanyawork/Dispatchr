@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/theme/app_theme.dart';
-import '../../app/router.dart';
 import '../../core/constants.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/section_nav_menu.dart';
 import '../../shared/widgets/skeleton_loader.dart';
 import 'admin_repository.dart';
 
@@ -61,13 +61,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Management'),
-        actions: [
-          IconButton(
-            tooltip: 'Log out',
-            icon: const Icon(Icons.logout),
-            onPressed: AppSession.instance.signOut,
-          ),
-        ],
+        actions: [SectionNavMenu(items: adminSectionItems())],
       ),
       body: Column(
         children: [

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/theme/app_theme.dart';
-import '../../app/router.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/section_nav_menu.dart';
 import '../../shared/widgets/skeleton_loader.dart';
 import 'admin_repository.dart';
 
@@ -35,13 +35,7 @@ class SubscriptionBillingScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Subscription & Billing'),
-        actions: [
-          IconButton(
-            tooltip: 'Log out',
-            icon: const Icon(Icons.logout),
-            onPressed: AppSession.instance.signOut,
-          ),
-        ],
+        actions: [SectionNavMenu(items: adminSectionItems())],
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: adminRepository.watchAllBusinesses(),

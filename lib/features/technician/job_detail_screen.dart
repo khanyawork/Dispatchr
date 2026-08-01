@@ -12,6 +12,7 @@ import '../../shared/widgets/skeleton_loader.dart';
 import '../../shared/widgets/status_badge.dart';
 import '../jobs/job_provider.dart';
 import '../jobs/job_repository.dart';
+import '../jobs/job_status.dart';
 
 /// README Section 8.2's job detail screen: address, client name,
 /// description, Owner-authored notes, status control (Pending -> In
@@ -161,7 +162,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ),
-                    StatusBadge(status: job.status),
+                    StatusBadge(status: JobStatus.fromValueOrDefault(job.status)),
                   ],
                 ),
                 const SizedBox(height: 8),

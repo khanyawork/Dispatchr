@@ -5,7 +5,12 @@ import '../theme/app_theme.dart';
 /// Shimmer-style loading placeholder used instead of a bare spinner
 /// (README Section 5.3) wherever a list of cards is loading — e.g. a
 /// technician's job list or a client's request list. A lightened band
-/// sweeps across each placeholder bar on a loop.
+/// sweeps across each placeholder on a loop.
+///
+/// Instead of anonymous flat bars, each placeholder is a ghost of the
+/// card it stands in for — leading avatar disc, two text lines of
+/// different lengths, and a trailing status-pill shape — so the loading
+/// state already communicates the layout that's about to arrive.
 class SkeletonLoader extends StatefulWidget {
   const SkeletonLoader({
     super.key,
@@ -42,8 +47,10 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColorExtension>()!;
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColorExtension>()!;
     final baseColor = colors.surfaceAlt;
+    final boneColor = _lighten(baseColor, 0.06);
     final highlightColor = _lighten(baseColor, 0.15);
 
     return AnimatedBuilder(
@@ -70,11 +77,68 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) => Container(
           height: widget.itemHeight,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: baseColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: theme.colorScheme.outline.withValues(alpha: 0.5),
+            ),
+          ),
+          child: Row(
+            children: [
+              // Leading avatar/icon disc.
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: boneColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 14),
+              // Two ghost text lines — staggered widths per row so the
+              // list doesn't look stamped from a single template.
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FractionallySizedBox(
+                      widthFactor: index.isEven ? 0.55 : 0.45,
+                      child: _bone(boneColor, height: 12),
+                    ),
+                    const SizedBox(height: 8),
+                    FractionallySizedBox(
+                      widthFactor: index.isEven ? 0.35 : 0.42,
+                      child: _bone(boneColor, height: 10),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 14),
+              // Trailing status-pill ghost.
+              Container(
+                width: 56,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: boneColor,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _bone(Color color, {required double height}) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(height / 2),
       ),
     );
   }

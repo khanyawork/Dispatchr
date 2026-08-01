@@ -9,6 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../app/app_providers.dart';
 import '../../core/constants.dart';
+import '../../dev/preview_data.dart';
+import '../../dev/preview_mode.dart';
 import '../jobs/job_repository.dart';
 
 /// README Section 8.1's "New Request form" — description, preferred
@@ -56,6 +58,15 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
   }
 
   Future<void> _loadProfileAndBusiness() async {
+    if (PreviewMode.enabled) {
+      setState(() {
+        _clientName = PreviewIds.clientName;
+        _businessId = PreviewIds.businessId;
+        _isLoadingProfile = false;
+      });
+      return;
+    }
+
     final client = ref.read(supabaseClientProvider);
     final userId = client.auth.currentUser!.id;
 
@@ -173,9 +184,10 @@ class _NewRequestScreenState extends ConsumerState<NewRequestScreen> {
       _errorMessage = null;
     });
 
-    final client = ref.read(supabaseClientProvider);
-    final userId = client.auth.currentUser!.id;
     final jobRepository = ref.read(jobRepositoryProvider);
+    final userId = PreviewMode.enabled
+        ? PreviewIds.client
+        : ref.read(supabaseClientProvider).auth.currentUser!.id;
 
     try {
       final jobId = await jobRepository.createJob({
