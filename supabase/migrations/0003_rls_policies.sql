@@ -146,16 +146,3 @@ create policy "Owners can delete jobs in their business"
     current_user_role() = 'owner'
     and business_id = current_user_business_id()
   );
-
--- admin_audit_log ---------------------------------------------------------
-
-create policy "Admins can view the audit log"
-  on admin_audit_log for select
-  using (current_user_role() = 'admin');
-
-create policy "Admins can record their own audit entries"
-  on admin_audit_log for insert
-  with check (
-    admin_id = auth.uid()
-    and current_user_role() = 'admin'
-  );
